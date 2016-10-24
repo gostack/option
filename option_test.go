@@ -28,6 +28,12 @@ type testEntry struct {
 	TypeName string
 }
 
+func verifyTestEntry(t *testing.T, idx int, e testEntry) {
+	verifyPtr(t, idx, e)
+	verifyString(t, idx, e)
+	verifyGoString(t, idx, e)
+}
+
 func verifyPtr(t *testing.T, idx int, e testEntry) {
 	var iptrValue interface{}
 	iptr := reflect.ValueOf(e.Object.interfacePtr())

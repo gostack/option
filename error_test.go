@@ -29,8 +29,6 @@ func TestError(t *testing.T) {
 	}
 
 	for idx, e := range table {
-		verifyPtr(t, idx, e)
-		verifyString(t, idx, e)
-		verifyGoString(t, idx, e)
+		verifyTestEntry(t, idx, e)
 	}
 }
