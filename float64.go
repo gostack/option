@@ -21,8 +21,8 @@ import (
 )
 
 type Float64 struct {
-	Value float64
-	Valid bool
+	value   float64
+	present bool
 }
 
 func NoneFloat64() Float64 {
@@ -30,32 +30,40 @@ func NoneFloat64() Float64 {
 }
 
 func SomeFloat64(v float64) Float64 {
-	return Float64{Value: v, Valid: true}
+	return Float64{value: v, present: true}
 }
 
-func (o Float64) Ptr() *float64 {
-	if !o.Valid {
-		return nil
+func (o Float64) IsPresent() bool {
+  return o.present
+}
+
+func (o Float64) Value() float64 {
+	return o.value
+}
+
+func (o Float64) ValueOr(orValue float64) float64 {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Float64) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
 
-	return fmt.Sprintf("%v", o.Value)
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Float64) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.Float64(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.Float64(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.Float64(%#v)", o.Value)
+	return fmt.Sprintf("option.Float64(%#v)", o.value)
 }
 
-func (o Float64) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Float64) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

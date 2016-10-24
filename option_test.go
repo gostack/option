@@ -22,8 +22,15 @@ import (
 	"testing"
 )
 
+type iface interface {
+	String() string
+	GoString() string
+	IsPresent() bool
+	interfaceValue() interface{}
+}
+
 type testEntry struct {
-	Object   Interface
+	Object   iface
 	Value    interface{}
 	TypeName string
 }
@@ -35,17 +42,16 @@ func verifyTestEntry(t *testing.T, idx int, e testEntry) {
 }
 
 func verifyPtr(t *testing.T, idx int, e testEntry) {
-	var iptrValue interface{}
-	iptr := reflect.ValueOf(e.Object.interfacePtr())
-
-	if iptr.IsNil() {
-		iptrValue = nil
+	if e.Value == nil {
+		if e.Object.IsPresent() {
+			t.Errorf("Entry %d: expected object to not be present", idx)
+		}
 	} else {
-		iptrValue = iptr.Elem().Interface()
-	}
+		v := e.Object.interfaceValue()
 
-	if !reflect.DeepEqual(iptrValue, e.Value) {
-		t.Errorf("Entry %d: expected .interfacePtr() to return %#v, got %#v instead", idx, e.Value, iptrValue)
+		if !reflect.DeepEqual(v, e.Value) {
+			t.Errorf("Entry %d: expected .Value() to return %#v, got %#v instead", idx, e.Value, v)
+		}
 	}
 }
 

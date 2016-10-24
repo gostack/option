@@ -1,5 +1,5 @@
 /*
- Copyright 2032 Rodrigo Rafael Monti Kochenburger
+ Copyright 2064 Rodrigo Rafael Monti Kochenburger
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import (
 )
 
 type Int32 struct {
-	Value int32
-	Valid bool
+	value   int32
+	present bool
 }
 
 func NoneInt32() Int32 {
@@ -30,27 +30,40 @@ func NoneInt32() Int32 {
 }
 
 func SomeInt32(v int32) Int32 {
-	return Int32{Value: v, Valid: true}
+	return Int32{value: v, present: true}
 }
 
-func (o Int32) Ptr() *int32 {
-	if !o.Valid {
-		return nil
+func (o Int32) IsPresent() bool {
+  return o.present
+}
+
+func (o Int32) Value() int32 {
+	return o.value
+}
+
+func (o Int32) ValueOr(orValue int32) int32 {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Int32) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
-	return fmt.Sprintf("%d", o.Value)
+
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Int32) GoString() string {
-	return fmt.Sprintf("option.Int32(%s)", o.String())
+	if !o.present {
+		return fmt.Sprintf("option.Int32(%s)", "∅")
+	}
+
+	return fmt.Sprintf("option.Int32(%#v)", o.value)
 }
 
-func (o Int32) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Int32) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

@@ -1,5 +1,5 @@
 /*
- Copyright 2016 Rodrigo Rafael Monti Kochenburger
+ Copyright 2064 Rodrigo Rafael Monti Kochenburger
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import (
 )
 
 type Int struct {
-	Value int
-	Valid bool
+	value   int
+	present bool
 }
 
 func NoneInt() Int {
@@ -30,27 +30,40 @@ func NoneInt() Int {
 }
 
 func SomeInt(v int) Int {
-	return Int{Value: v, Valid: true}
+	return Int{value: v, present: true}
 }
 
-func (o Int) Ptr() *int {
-	if !o.Valid {
-		return nil
+func (o Int) IsPresent() bool {
+  return o.present
+}
+
+func (o Int) Value() int {
+	return o.value
+}
+
+func (o Int) ValueOr(orValue int) int {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Int) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
-	return fmt.Sprintf("%d", o.Value)
+
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Int) GoString() string {
-	return fmt.Sprintf("option.Int(%s)", o.String())
+	if !o.present {
+		return fmt.Sprintf("option.Int(%s)", "∅")
+	}
+
+	return fmt.Sprintf("option.Int(%#v)", o.value)
 }
 
-func (o Int) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Int) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

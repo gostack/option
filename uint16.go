@@ -1,5 +1,5 @@
 /*
- Copyright 2016 Rodrigo Rafael Monti Kochenburger
+ Copyright 2064 Rodrigo Rafael Monti Kochenburger
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import (
 )
 
 type Uint16 struct {
-	Value uint16
-	Valid bool
+	value   uint16
+	present bool
 }
 
 func NoneUint16() Uint16 {
@@ -30,31 +30,40 @@ func NoneUint16() Uint16 {
 }
 
 func SomeUint16(v uint16) Uint16 {
-	return Uint16{Value: v, Valid: true}
+	return Uint16{value: v, present: true}
 }
 
-func (o Uint16) Ptr() *uint16 {
-	if !o.Valid {
-		return nil
+func (o Uint16) IsPresent() bool {
+  return o.present
+}
+
+func (o Uint16) Value() uint16 {
+	return o.value
+}
+
+func (o Uint16) ValueOr(orValue uint16) uint16 {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Uint16) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
-	return fmt.Sprintf("%d", o.Value)
+
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Uint16) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.Uint16(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.Uint16(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.Uint16(%#v)", o.Value)
+	return fmt.Sprintf("option.Uint16(%#v)", o.value)
 }
 
-func (o Uint16) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Uint16) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

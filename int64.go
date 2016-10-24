@@ -21,8 +21,8 @@ import (
 )
 
 type Int64 struct {
-	Value int64
-	Valid bool
+	value   int64
+	present bool
 }
 
 func NoneInt64() Int64 {
@@ -30,27 +30,40 @@ func NoneInt64() Int64 {
 }
 
 func SomeInt64(v int64) Int64 {
-	return Int64{Value: v, Valid: true}
+	return Int64{value: v, present: true}
 }
 
-func (o Int64) Ptr() *int64 {
-	if !o.Valid {
-		return nil
+func (o Int64) IsPresent() bool {
+  return o.present
+}
+
+func (o Int64) Value() int64 {
+	return o.value
+}
+
+func (o Int64) ValueOr(orValue int64) int64 {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Int64) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
-	return fmt.Sprintf("%d", o.Value)
+
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Int64) GoString() string {
-	return fmt.Sprintf("option.Int64(%s)", o.String())
+	if !o.present {
+		return fmt.Sprintf("option.Int64(%s)", "∅")
+	}
+
+	return fmt.Sprintf("option.Int64(%#v)", o.value)
 }
 
-func (o Int64) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Int64) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

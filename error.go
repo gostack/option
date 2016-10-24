@@ -21,8 +21,8 @@ import (
 )
 
 type Error struct {
-	Value error
-	Valid bool
+	value   error
+	present bool
 }
 
 func NoneError() Error {
@@ -30,32 +30,40 @@ func NoneError() Error {
 }
 
 func SomeError(v error) Error {
-	return Error{Value: v, Valid: true}
+	return Error{value: v, present: true}
 }
 
-func (o Error) Ptr() *error {
-	if !o.Valid {
-		return nil
+func (o Error) IsPresent() bool {
+  return o.present
+}
+
+func (o Error) Value() error {
+	return o.value
+}
+
+func (o Error) ValueOr(orValue error) error {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Error) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
 
-	return fmt.Sprintf("%v", o.Value)
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Error) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.Error(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.Error(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.Error(%#v)", o.Value)
+	return fmt.Sprintf("option.Error(%#v)", o.value)
 }
 
-func (o Error) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Error) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

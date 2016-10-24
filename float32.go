@@ -1,5 +1,5 @@
 /*
- Copyright 2032 Rodrigo Rafael Monti Kochenburger
+ Copyright 2064 Rodrigo Rafael Monti Kochenburger
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import (
 )
 
 type Float32 struct {
-	Value float32
-	Valid bool
+	value   float32
+	present bool
 }
 
 func NoneFloat32() Float32 {
@@ -30,32 +30,40 @@ func NoneFloat32() Float32 {
 }
 
 func SomeFloat32(v float32) Float32 {
-	return Float32{Value: v, Valid: true}
+	return Float32{value: v, present: true}
 }
 
-func (o Float32) Ptr() *float32 {
-	if !o.Valid {
-		return nil
+func (o Float32) IsPresent() bool {
+  return o.present
+}
+
+func (o Float32) Value() float32 {
+	return o.value
+}
+
+func (o Float32) ValueOr(orValue float32) float32 {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Float32) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
 
-	return fmt.Sprintf("%v", o.Value)
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Float32) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.Float32(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.Float32(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.Float32(%#v)", o.Value)
+	return fmt.Sprintf("option.Float32(%#v)", o.value)
 }
 
-func (o Float32) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Float32) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

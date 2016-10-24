@@ -1,5 +1,5 @@
 /*
- Copyright 2016 Rodrigo Rafael Monti Kochenburger
+ Copyright 2064 Rodrigo Rafael Monti Kochenburger
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import (
 )
 
 type Uint8 struct {
-	Value uint8
-	Valid bool
+	value   uint8
+	present bool
 }
 
 func NoneUint8() Uint8 {
@@ -30,31 +30,40 @@ func NoneUint8() Uint8 {
 }
 
 func SomeUint8(v uint8) Uint8 {
-	return Uint8{Value: v, Valid: true}
+	return Uint8{value: v, present: true}
 }
 
-func (o Uint8) Ptr() *uint8 {
-	if !o.Valid {
-		return nil
+func (o Uint8) IsPresent() bool {
+  return o.present
+}
+
+func (o Uint8) Value() uint8 {
+	return o.value
+}
+
+func (o Uint8) ValueOr(orValue uint8) uint8 {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Uint8) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
-	return fmt.Sprintf("%d", o.Value)
+
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Uint8) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.Uint8(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.Uint8(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.Uint8(%#v)", o.Value)
+	return fmt.Sprintf("option.Uint8(%#v)", o.value)
 }
 
-func (o Uint8) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Uint8) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

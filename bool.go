@@ -21,8 +21,8 @@ import (
 )
 
 type Bool struct {
-	Value bool
-	Valid bool
+	value   bool
+	present bool
 }
 
 func NoneBool() Bool {
@@ -30,32 +30,40 @@ func NoneBool() Bool {
 }
 
 func SomeBool(v bool) Bool {
-	return Bool{Value: v, Valid: true}
+	return Bool{value: v, present: true}
 }
 
-func (o Bool) Ptr() *bool {
-	if !o.Valid {
-		return nil
+func (o Bool) IsPresent() bool {
+  return o.present
+}
+
+func (o Bool) Value() bool {
+	return o.value
+}
+
+func (o Bool) ValueOr(orValue bool) bool {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o Bool) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
 
-	return fmt.Sprintf("%v", o.Value)
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o Bool) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.Bool(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.Bool(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.Bool(%#v)", o.Value)
+	return fmt.Sprintf("option.Bool(%#v)", o.value)
 }
 
-func (o Bool) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o Bool) interfaceValue() interface{} {
+	return interface{}(o.value)
 }

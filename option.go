@@ -17,9 +17,3 @@
 package option
 
 const NONE = "∅"
-
-type Interface interface {
-	String() string
-	GoString() string
-	interfacePtr() interface{}
-}

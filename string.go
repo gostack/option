@@ -21,8 +21,8 @@ import (
 )
 
 type String struct {
-	Value string
-	Valid bool
+	value   string
+	present bool
 }
 
 func NoneString() String {
@@ -30,32 +30,40 @@ func NoneString() String {
 }
 
 func SomeString(v string) String {
-	return String{Value: v, Valid: true}
+	return String{value: v, present: true}
 }
 
-func (o String) Ptr() *string {
-	if !o.Valid {
-		return nil
+func (o String) IsPresent() bool {
+  return o.present
+}
+
+func (o String) Value() string {
+	return o.value
+}
+
+func (o String) ValueOr(orValue string) string {
+	if !o.present {
+		return orValue
 	}
-	return &o.Value
+	return o.value
 }
 
 func (o String) String() string {
-	if !o.Valid {
-		return NONE
+	if !o.present {
+		return "∅"
 	}
 
-	return fmt.Sprintf("%v", o.Value)
+	return fmt.Sprintf("%v", o.value)
 }
 
 func (o String) GoString() string {
-	if !o.Valid {
-		return fmt.Sprintf("option.String(%s)", NONE)
+	if !o.present {
+		return fmt.Sprintf("option.String(%s)", "∅")
 	}
 
-	return fmt.Sprintf("option.String(%#v)", o.Value)
+	return fmt.Sprintf("option.String(%#v)", o.value)
 }
 
-func (o String) interfacePtr() interface{} {
-	return interface{}(o.Ptr())
+func (o String) interfaceValue() interface{} {
+	return interface{}(o.value)
 }
